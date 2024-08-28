@@ -1,4 +1,4 @@
-package example.com.infrastructure.persistence
+package utn.methodology.infrastructure.persistence
 
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection

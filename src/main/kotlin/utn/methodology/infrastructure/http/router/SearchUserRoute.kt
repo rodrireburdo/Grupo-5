@@ -2,7 +2,7 @@ package utn.methodology.infrastructure.http.router
 
 import utn.methodology.application.queryhandlers.SearchUserQueryHandler
 import utn.methodology.application.queries.SearchUserQuery
-import utn.methodology.infrastructure.persistence.http.actions.SearchUserAction
+import utn.methodology.infrastructure.http.actions.SearchUserAction
 import utn.methodology.infrastructure.persistence.repositories.SearchUserMongoRepository
 import utn.methodology.infrastructure.persistence.connectToMongoDB
 import io.ktor.http.*
@@ -29,7 +29,7 @@ fun Application.userRoutes() {
             try {
                 val user = searchUserAction.handle(query)
                 if(user != null) { call.respond(HttpStatusCode.OK, user) }
-                else { call.respond(HttpStatusCode.NotFound, "User not found"}
+                else { call.respond(HttpStatusCode.NotFound, "User not found")}
             } catch (error: Exception) {
                 call.respond(HttpStatusCode.InternalServerError, "Error")
             }
