@@ -2,12 +2,18 @@ package utn.methodology.infrastructure.http.actions
 
 import utn.methodology.application.queries.SearchUserQuery
 import utn.methodology.application.queryhandlers.SearchUserQueryHandler
-import utn.methodology.domain.entities.UserResponseDTO
+import utn.methodology.domain.entities.User
 
 class SearchUserAction(
     private val queryHandler: SearchUserQueryHandler
 ) {
-    fun handle(query: SearchUserQuery): UserResponseDTO? {
-        return queryHandler.handle(query)
+    fun execute(query: SearchUserQuery): Map<String, String>{
+        query
+            .validate()
+            .let {
+                return queryHandler.handle(it)
+            }
     }
 }
+
+
