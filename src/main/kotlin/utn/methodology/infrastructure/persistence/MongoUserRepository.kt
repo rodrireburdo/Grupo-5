@@ -1,10 +1,9 @@
 package utn.methodology.infrastructure.persistence
-
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.UpdateOptions
-import example.com.domain.entities.User
+import utn.methodology.domain.entities.User
 import org.bson.Document
 import java.util.UUID
 

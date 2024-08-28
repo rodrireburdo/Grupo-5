@@ -1,4 +1,4 @@
-package example.com.domain.entities
+package utn.methodology.domain.entities
 
 class User(
     private val id: String,
