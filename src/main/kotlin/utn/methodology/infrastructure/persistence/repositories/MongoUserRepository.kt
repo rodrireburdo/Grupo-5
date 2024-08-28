@@ -26,14 +26,10 @@ class MongoUserRepository(private val database: MongoDatabase) {
 
             collection.updateOne(filter, update, options)
     }
-    fun findOne(id: String): User? {
-        val filter = Document("_id", id);
+    fun findOne(name: String): User? {
+        val filter = Document("_name", name)
 
-        val primitives = collection.find(filter).firstOrNull();
-
-        if (primitives == null) {
-            return null;
-        }
+        val primitives = collection.find(filter).firstOrNull() ?: return null;
 
         return User.fromPrimitives(primitives as Map<String, String>)
     }

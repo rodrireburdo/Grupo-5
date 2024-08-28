@@ -1,22 +1,22 @@
 package utn.methodology.application.queryhandlers
 
+import io.ktor.server.plugins.*
 import utn.methodology.domain.entities.UserResponseDTO
 import utn.methodology.application.queries.SearchUserQuery
-import utn.methodology.infrastructure.persistence.repositories.SearchUserRepository
+import utn.methodology.domain.entities.User
+import utn.methodology.infrastructure.persistence.MongoUserRepository
 
 class SearchUserQueryHandler(
-    private val searchUserRepository: SearchUserRepository
+    private val userRepository: MongoUserRepository
 ) {
-    fun handle(query: SearchUserQuery): UserResponseDTO? {
-        val user = searchUserRepository.searchUsername(query.username)
+    fun handle(query: SearchUserQuery): Map<String, String> {
+        val user = userRepository.findOne(query.username)
 
-        return user?.let {
-            UserResponseDTO(
-                uuid = user.uuid,
-                name = user.name,
-                username = user.username,
-                email = user.email
-            )
+        if (user == null){
+            throw NotFoundException("user with username ${query.username} not found")
         }
-    }
+        return user.toPrimitives()
+
+
+}
 }

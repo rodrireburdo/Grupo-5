@@ -27,6 +27,10 @@ class User(
         return this.id
     }
 
+    fun getName(): String{
+        return this.name
+    }
+
     fun update(name: String, username: String, password: String) {
         this.name = name
         this.username = username
