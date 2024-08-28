@@ -1,4 +1,4 @@
-package utn.methodology.infrastructure.persistence
+package utn.methodology.infrastructure.persistence.repositories
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
@@ -21,14 +21,20 @@ class MongoUserRepository(private val database: MongoDatabase) {
     fun save(user: User){
             collection = database.getCollection("users") as MongoCollection<Document>
             val options = UpdateOptions().upsert(true)
-            val filter = Document("_id", user.getId())
+            val filter = Document("_name", user.getName())
             val update = Document(" \$set", user.toPrimitives())
 
             collection.updateOne(filter, update, options)
     }
-    fun findOne(name: String): User? {
+    fun findByName(name: String): User? {
         val filter = Document("_name", name)
 
+        val primitives = collection.find(filter).firstOrNull() ?: return null;
+
+        return User.fromPrimitives(primitives as Map<String, String>)
+    }
+    fun findByEmail(email: String): User?{
+        val filter = Document("_email", email)
         val primitives = collection.find(filter).firstOrNull() ?: return null;
 
         return User.fromPrimitives(primitives as Map<String, String>)
@@ -44,7 +50,7 @@ class MongoUserRepository(private val database: MongoDatabase) {
     }
 
     fun delete(user: User) {
-        val filter = Document("_id", user.getId());
+        val filter = Document("_id", user.getName());
 
         collection.deleteOne(filter)
     }

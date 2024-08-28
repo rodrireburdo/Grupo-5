@@ -3,7 +3,7 @@ package utn.methodology.infrastructure.http.router
 import utn.methodology.application.queryhandlers.SearchUserQueryHandler
 import utn.methodology.application.queries.SearchUserQuery
 import utn.methodology.infrastructure.http.actions.SearchUserAction
-import utn.methodology.infrastructure.persistence.MongoUserRepository
+import utn.methodology.infrastructure.persistence.repositories.MongoUserRepository
 import utn.methodology.infrastructure.persistence.connectToMongoDB
 import io.ktor.http.*
 import io.ktor.server.application.*

@@ -42,7 +42,7 @@ fun Application.module() {
     }
 
     configureDatabases()
-    userRouter()
+    userRoutes()
     errorHandler()
 }
 
