@@ -23,9 +23,7 @@ class User(
         }
     }
 
-    fun getId(): String {
-        return this.id
-    }
+
 
     fun getName(): String{
         return this.name
