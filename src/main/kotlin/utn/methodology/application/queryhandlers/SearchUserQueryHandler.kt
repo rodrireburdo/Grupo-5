@@ -1,7 +1,6 @@
 package utn.methodology.application.queryhandlers
 
 import io.ktor.server.plugins.*
-import utn.methodology.domain.entities.UserResponseDTO
 import utn.methodology.application.queries.SearchUserQuery
 import utn.methodology.domain.entities.User
 import utn.methodology.infrastructure.persistence.repositories.MongoUserRepository
