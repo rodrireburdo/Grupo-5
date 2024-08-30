@@ -5,6 +5,7 @@ import utn.methodology.application.queries.SearchUserQuery
 import utn.methodology.infrastructure.http.actions.SearchUserAction
 import utn.methodology.infrastructure.persistence.repositories.MongoUserRepository
 import utn.methodology.infrastructure.persistence.connectToMongoDB
+import utn.methodology.application.commands.CreateUserCommands
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -33,6 +34,14 @@ fun Application.userRoutes() {
             } catch (error: Exception) {
                 call.respond(HttpStatusCode.InternalServerError, "Error")
             }
+        }
+        post("/users") {
+
+            val body = call.receive<CreateUserCommand>()
+
+            createUserAction.execute(body);
+
+            call.respond(HttpStatusCode.Created, mapOf("message" to "ok"))
         }
     }
 }
