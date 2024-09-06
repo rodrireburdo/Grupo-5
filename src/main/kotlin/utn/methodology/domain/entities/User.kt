@@ -23,8 +23,6 @@ class User(
         }
     }
 
-
-
     fun getName(): String{
         return this.name
     }
