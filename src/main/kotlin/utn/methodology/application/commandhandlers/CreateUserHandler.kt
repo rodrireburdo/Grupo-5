@@ -35,6 +35,6 @@ class CreateUserHandler(
             "Usuario creado exitosamente."
         } catch (e: Exception) {
             "Error al crear el usuario: ${e.message}"
-            }
         }
+    }
 }

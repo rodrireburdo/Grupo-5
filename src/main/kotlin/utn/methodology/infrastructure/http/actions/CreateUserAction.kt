@@ -8,7 +8,7 @@ class CreateUserAction(
 ) {
 
     fun execute(body: CreateUserCommand) {
-        if (command.username.isBlank() || command.email.isBlank() || command.password.isBlank()) {
+        if (body.userName.isBlank() || body.email.isBlank() || body.password.isBlank()) {
             throw IllegalArgumentException("Invalid Data")
         }
         body.validate().let {

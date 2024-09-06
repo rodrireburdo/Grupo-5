@@ -7,5 +7,5 @@ ktor:
 
 db:
     mongo:
-        user: 'local'
-        password: 'secret'
+        user: '$MONGO_USERNAME:local'
+        password: '$MONGO_PASSWORD:secret'

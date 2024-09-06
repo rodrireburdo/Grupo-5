@@ -19,10 +19,9 @@ class MongoUserRepository(private val database: MongoDatabase) {
     }
 
     fun save(user: User){
-            collection = database.getCollection("users") as MongoCollection<Document>
             val options = UpdateOptions().upsert(true)
-            val filter = Document("_name", user.getName())
-            val update = Document(" \$set", user.toPrimitives())
+            val filter = Document("_id", user.getId())
+            val update = Document("\$set", user.toPrimitives())
 
             collection.updateOne(filter, update, options)
     }
