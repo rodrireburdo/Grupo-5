@@ -42,6 +42,15 @@ fun Application.userRoutes() {
             createUserAction.execute(body);
 
             call.respond(HttpStatusCode.Created, mapOf("message" to "ok"))
-        }
+
     }
+        post("/register") {
+            val body = call.receive<CreateUserCommand>()
+
+            try {
+                createUserAction.execute(body)
+                call.respond(HttpStatusCode.Created, mapOf("message" to "User created successfully"))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error creating user")
+            }
 }
