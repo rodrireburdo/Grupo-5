@@ -5,17 +5,20 @@ import utn.methodology.application.queries.SearchUserQuery
 import utn.methodology.infrastructure.http.actions.SearchUserAction
 import utn.methodology.infrastructure.persistence.repositories.MongoUserRepository
 import utn.methodology.infrastructure.persistence.connectToMongoDB
-import utn.methodology.application.commands.CreateUserCommands
+import utn.methodology.application.commands.CreateUserCommand
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import utn.methodology.application.commandhandlers.CreateUserHandler
+import utn.methodology.infrastructure.http.actions.CreateUserAction
 
 fun Application.userRoutes() {
     val mongoDatabase = connectToMongoDB()
     val searchUserMongoRepository = MongoUserRepository(mongoDatabase)
     val searchUserAction = SearchUserAction(SearchUserQueryHandler(searchUserMongoRepository))
+    val createUserAction = CreateUserAction(CreateUserHandler(searchUserMongoRepository))
 
     routing {
         get("/users/{name}") {
@@ -29,8 +32,11 @@ fun Application.userRoutes() {
 
             try {
                 val user = searchUserAction.execute(query)
-                if(user != null) { call.respond(HttpStatusCode.OK, user) }
-                else { call.respond(HttpStatusCode.NotFound, "User not found")}
+                if (user != null) {
+                    call.respond(HttpStatusCode.OK, user)
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "User not found")
+                }
             } catch (error: Exception) {
                 call.respond(HttpStatusCode.InternalServerError, "Error")
             }
@@ -43,7 +49,7 @@ fun Application.userRoutes() {
 
             call.respond(HttpStatusCode.Created, mapOf("message" to "ok"))
 
-    }
+        }
         post("/register") {
             val body = call.receive<CreateUserCommand>()
 
@@ -53,4 +59,6 @@ fun Application.userRoutes() {
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError, "Error creating user")
             }
+        }
+    }
 }

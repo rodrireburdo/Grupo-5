@@ -42,4 +42,8 @@ class User(
             "password" to this.password
         )
     }
+
+    fun getId(): String {
+        return this.id
+    }
 }
