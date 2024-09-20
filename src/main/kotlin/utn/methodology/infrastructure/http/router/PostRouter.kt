@@ -15,7 +15,7 @@ import utn.methodology.infrastructure.persistence.MongoPostRepository
 import utn.methodology.domain.entities.Post
 
 
-fun Route.postRoutes() {
+fun Application.postRoutes() {
     route("/posts") {
         get {
             val order = call.request.queryParameters["order"]?.toUpperCase()

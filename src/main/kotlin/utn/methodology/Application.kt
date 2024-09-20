@@ -13,6 +13,8 @@ import io.ktor.server.response.*
 import org.slf4j.LoggerFactory
 import utn.methodology.infrastructure.persistence.configureDatabases
 import utn.methodology.infrastructure.http.router.userRoutes
+import utn.methodology.infrastructure.http.router.postRoutes
+
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -46,7 +48,11 @@ fun Application.module() {
     errorHandler()
 }
 
-
+fun Application.module() {
+    routing {
+        postRoutes()
+    }
+}
 
 fun logError(call: ApplicationCall, cause: Throwable) {
     val log = LoggerFactory.getLogger("ErrorLogger")
