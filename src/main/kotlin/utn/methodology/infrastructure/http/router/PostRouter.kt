@@ -14,35 +14,52 @@ import io.ktor.server.routing.*
 import utn.methodology.infrastructure.persistence.MongoPostRepository
 import utn.methodology.domain.entities.Post
 
+fun Application.postRoutes() {
+    routing {
+        route("/posts") {
 
-fun Route.postRoutes() {
-    route("/posts") {
-        get {
-            val order = call.request.queryParameters["order"]?.toUpperCase()
-            val limit = call.request.queryParameters["limit"]?.toIntOrNull()
-            val offset = call.request.queryParameters["offset"]?.toIntOrNull()
+            post {
+                try {
+                    val postRequest = call.receive<CreatePostRequest>()
+                     val author = "eze y rodri" 
+                    val post = postService.createPost(postRequest.userId, postRequest.message, author)
+                    val savedPost = postRepository.save(post)
 
-            if (limit != null && limit < 1) {
-                call.respond(HttpStatusCode.BadRequest, "El límite debe ser mayor que 0.")
-                return@get
-            }
-            if (offset != null && offset < 0) {
-                call.respond(HttpStatusCode.BadRequest, "El offset no puede ser negativo.")
-                return@get
-            }
-            if (order != null && order != "ASC" && order != "DESC") {
-                call.respond(HttpStatusCode.BadRequest, "El orden debe ser 'ASC' o 'DESC'.")
-                return@get
+                    call.respond(HttpStatusCode.Created, savedPost)
+                } catch (e: IllegalArgumentException) {
+                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Error en la solicitud")
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, "Ocurrió un error inesperado")
+                }
             }
 
-            val userId = call.principal<UserIdPrincipal>()?.name
-            if (userId == null) {
-                call.respond(HttpStatusCode.Unauthorized, "Usuario no autenticado.")
-                return@get
-            }
+            get {
+                val order = call.request.queryParameters["order"]?.toUpperCase()
+                val limit = call.request.queryParameters["limit"]?.toIntOrNull()
+                val offset = call.request.queryParameters["offset"]?.toIntOrNull()
 
-            val posts = MongoPostRepository.getPosts(userId, order, limit, offset)
-            call.respond(posts)
+                if (limit != null && limit < 1) {
+                    call.respond(HttpStatusCode.BadRequest, "El límite debe ser mayor que 0.")
+                    return@get
+                }
+                if (offset != null && offset < 0) {
+                    call.respond(HttpStatusCode.BadRequest, "El offset no puede ser negativo.")
+                    return@get
+                }
+                if (order != null && order != "ASC" && order != "DESC") {
+                    call.respond(HttpStatusCode.BadRequest, "El orden debe ser 'ASC' o 'DESC'.")
+                    return@get
+                }
+
+                val userId = call.principal<UserIdPrincipal>()?.name
+                if (userId == null) {
+                    call.respond(HttpStatusCode.Unauthorized, "Usuario no autenticado.")
+                    return@get
+                }
+
+                val posts = MongoPostRepository.getPosts(userId, order, limit, offset)
+                call.respond(posts)
+            }
         }
     }
 }

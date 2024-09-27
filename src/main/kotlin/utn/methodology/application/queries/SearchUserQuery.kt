@@ -7,5 +7,5 @@ data class SearchUserQuery(
 
     checkNotNull(username) {throw IllegalArgumentException("name must be defined")}
     return this
-
-}}
+    }
+}

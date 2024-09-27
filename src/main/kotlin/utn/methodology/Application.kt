@@ -40,6 +40,12 @@ fun Application.module() {
             enable(SerializationFeature.INDENT_OUTPUT)
         }
     }
+    val postRepository = PostRepository()
+    val postService = PostService()
+
+    routing {
+        postRoutes(postService, postRepository)
+    }
 
     configureDatabases()
     userRoutes()
