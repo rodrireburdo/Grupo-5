@@ -21,7 +21,7 @@ fun Application.postRoutes() {
             post {
                 try {
                     val postRequest = call.receive<CreatePostRequest>()
-                     val author = "eze y rodri" 
+                    val author = "eze y rodri"
                     val post = postService.createPost(postRequest.userId, postRequest.message, author)
                     val savedPost = postRepository.save(post)
 
@@ -60,6 +60,38 @@ fun Application.postRoutes() {
                 val posts = MongoPostRepository.getPosts(userId, order, limit, offset)
                 call.respond(posts)
             }
+
+            delete("/{id}") {
+                try {
+                    val postId = call.parameters["id"]
+                    if (postId == null) {
+                        call.respond(HttpStatusCode.BadRequest, "ID de post no proporcionado.")
+                        return@delete
+                    }
+
+                    val userId = call.principal<UserIdPrincipal>()?.name
+                    if (userId == null) {
+                        call.respond(HttpStatusCode.Unauthorized, "Usuario no autenticado.")
+                        return@delete
+                    }
+
+                    val post = MongoPostRepository.getPostById(postId)
+                    if (post == null) {
+                        call.respond(HttpStatusCode.NotFound, "Post no encontrado.")
+                        return@delete
+                    }
+
+                    if (post.userId != userId) {
+                        call.respond(HttpStatusCode.Forbidden, "No tienes permiso para eliminar este post.")
+                        return@delete
+                    }
+
+
+                    MongoPostRepository.deletePost(postId)
+                    call.respond(HttpStatusCode.OK, "Post eliminado exitosamente.")
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, "Ocurrió un error al eliminar el post.")
+                }
         }
     }
 }
