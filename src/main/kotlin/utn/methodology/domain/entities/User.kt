@@ -5,7 +5,9 @@ class User(
     private var name: String,
     private var username: String,
     private val email: String,
-    private var password: String
+    private var password: String,
+    private val followers: MutableSet<String> = mutableSetOf(),
+    private val following: MutableSet<String> = mutableSetOf(),
 )
 {
     //En vez de usar as String, uso ?: "" para asegurar que si algún valor es null, se le asigne una cadena vacía ("")
@@ -17,7 +19,9 @@ class User(
                 primitives["name"] ?: "",
                 primitives["username"] ?: "",
                 primitives["email"] ?: "",
-                primitives["password"] ?: ""
+                primitives["password"] ?: "",
+                primitives["followers"] ?: "",
+                primitives["following"] ?: ""
             );
             return user;
         }
@@ -39,7 +43,9 @@ class User(
             "name" to this.name,
             "username" to this.username,
             "email" to this.email,
-            "password" to this.password
+            "password" to this.password,
+            "followers" to this.followers,
+            "following" to this.following
         )
     }
 
