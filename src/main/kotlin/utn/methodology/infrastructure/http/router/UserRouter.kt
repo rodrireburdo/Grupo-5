@@ -13,12 +13,21 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import utn.methodology.application.commandhandlers.CreateUserHandler
 import utn.methodology.infrastructure.http.actions.CreateUserAction
+import utn.methodology.application.commandhandlers.FollowUserHandler
+import utn.methodology.infrastructure.http.actions.FollowUserAction
+import utn.methodology.application.commands.FollowCommand
+import utn.methodology.application.queryhandlers.FollowerQueryHandler
+import utn.methodology.application.queries.FollowerQuery
+
+
 
 fun Application.userRoutes() {
     val mongoDatabase = connectToMongoDB()
     val searchUserMongoRepository = MongoUserRepository(mongoDatabase)
     val searchUserAction = SearchUserAction(SearchUserQueryHandler(searchUserMongoRepository))
-    val createUserAction = CreateUserAction(CreateUserHandler(searchUserMongoRepository))
+    val createUserAction = CreateUserAction(CreateUserHandler(searchUserMongoRepository)),
+    val followUserAction = FollowUserAction(FollowUserHandler(userRepository))
+
 
     routing {
         get("/users/{name}") {
@@ -60,5 +69,24 @@ fun Application.userRoutes() {
                 call.respond(HttpStatusCode.InternalServerError, "Error creating user")
             }
         }
+        // Follow User Route
+        post("/users/{followerId}/follow/{followeeId}") {
+            val followerId = call.parameters["followerId"]
+            val followeeId = call.parameters["followeeId"]
+
+            if (followerId == null || followeeId == null) {
+                call.respond(HttpStatusCode.BadRequest, "Follower ID and Followee ID must be provided")
+                return@post
+            }
+
+            try {
+                val command = FollowCommand(followerId, followeeId)
+                followUserAction.execute(command)
+                call.respond(HttpStatusCode.OK, mapOf("message" to "Followed successfully"))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error following user")
+            }
+        }
+
     }
 }
