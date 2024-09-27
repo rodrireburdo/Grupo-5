@@ -15,9 +15,10 @@ import utn.methodology.application.commandhandlers.CreateUserHandler
 import utn.methodology.infrastructure.http.actions.CreateUserAction
 import utn.methodology.application.commandhandlers.FollowUserHandler
 import utn.methodology.infrastructure.http.actions.FollowUserAction
-import utn.methodology.application.commands.FollowCommand
+import utn.methodology.application.commands.FollowUserCommand
 import utn.methodology.application.queryhandlers.FollowerQueryHandler
-import utn.methodology.application.queries.FollowerQuery
+import utn.methodology.application.queries.GetFollowersQuery
+import utn.methodology.application.queries.GetFollowingQuery
 
 
 
@@ -26,7 +27,7 @@ fun Application.userRoutes() {
     val searchUserMongoRepository = MongoUserRepository(mongoDatabase)
     val searchUserAction = SearchUserAction(SearchUserQueryHandler(searchUserMongoRepository))
     val createUserAction = CreateUserAction(CreateUserHandler(searchUserMongoRepository)),
-    val followUserAction = FollowUserAction(FollowUserHandler(userRepository))
+    val followUserAction = FollowUserAction(FollowUserHandler(MongoUserRepository))
 
 
     routing {
