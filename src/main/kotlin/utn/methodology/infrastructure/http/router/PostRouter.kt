@@ -61,6 +61,19 @@ fun Application.postRoutes() {
                 call.respond(posts)
             }
 
+            get("/user/{userId}") {
+                val userId = call.parameters["userId"] ?: return@get call.respond(HttpStatusCode.BadRequest, "UserId no proporcionado")
+
+                try {
+                    val query = GetFollowingQuery(userId)
+                    val posts = searchPostQueryHandler.handleGetFollowing(query)
+
+                    call.respond(HttpStatusCode.OK, posts)
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, "Error al obtener los posts de los usuarios seguidos.")
+                }
+            }
+
             delete("/{id}") {
                 try {
                     val postId = call.parameters["id"]
