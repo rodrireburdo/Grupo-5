@@ -1,5 +1,4 @@
 package utn.methodology.application.commandhandlers
-import jdk.jfr.internal.Repository
 import utn.methodology.domain.entities.User
 import utn.methodology.infrastructure.persistence.repositories.MongoUserRepository
 import utn.methodology.application.commands.FollowUserCommand
