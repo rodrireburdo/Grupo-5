@@ -1,12 +1,12 @@
 package utn.methodology.infrastructure.http.actions
-import utn.methodology.application.commands.FollowCommand
-import utn.methodology.application.commandhandlers.FollowerQueryHandler
-import utn.methodology.application.queries.FollowerQuery
+import utn.methodology.application.commands.FollowUserCommand
+import utn.methodology.application.queryhandlers.FollowerQueryHandler
+import utn.methodology.application.queries.GetFollowersQuery
 
 class FollowUserAction(
-    private val queryHandler: FollowQueryHandler
+    private val queryHandler: FollowerQueryHandler
 ) {
-    fun execute(query: FollowerQuery): Map<String, String>{
+    fun execute(query: GetFollowersQuery): Map<String, String>{
         query
             .validate()
             .let {
