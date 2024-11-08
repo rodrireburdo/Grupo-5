@@ -1,6 +1,7 @@
 package utn.methodology.application.queryhandlers
 import io.ktor.server.plugins.*
-import utn.methodology.application.queries.FollowerQuery
+import utn.methodology.application.queries.GetFollowersQuery
+import utn.methodology.application.queries.GetFollowingQuery
 import utn.methodology.domain.entities.User
 import utn.methodology.infrastructure.persistence.repositories.MongoUserRepository
 
