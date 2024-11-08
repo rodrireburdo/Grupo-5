@@ -1,16 +1,16 @@
 package utn.methodology.infrastructure.http.actions
+
+import utn.methodology.application.commandhandlers.FollowUserHandler
 import utn.methodology.application.commands.FollowUserCommand
-import utn.methodology.application.queryhandlers.FollowerQueryHandler
-import utn.methodology.application.queries.GetFollowersQuery
 
 class FollowUserAction(
-    private val queryHandler: FollowerQueryHandler
+    private val followUserHandler: FollowUserHandler
 ) {
-    fun execute(query: GetFollowersQuery): Map<String, String>{
-        query
-            .validate()
-            .let {
-                return queryHandler.handle(it)
-            }
+    fun execute(command: FollowUserCommand): Map<String, String> {
+        try {
+            return mapOf("mensaje" to followUserHandler.followUser(command))
+        } catch (e: Exception) {
+            return mapOf("error" to "Error al seguir al usuario: ${e.message}")
+        }
     }
 }

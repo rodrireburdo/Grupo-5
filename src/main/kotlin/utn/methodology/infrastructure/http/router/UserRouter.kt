@@ -16,25 +16,20 @@ import utn.methodology.infrastructure.http.actions.CreateUserAction
 import utn.methodology.application.commandhandlers.FollowUserHandler
 import utn.methodology.infrastructure.http.actions.FollowUserAction
 import utn.methodology.application.commands.FollowUserCommand
-import utn.methodology.application.queryhandlers.FollowerQueryHandler
-import utn.methodology.application.queries.GetFollowersQuery
-import utn.methodology.application.queries.GetFollowingQuery
-
 
 
 fun Application.userRoutes() {
     val mongoDatabase = connectToMongoDB()
     val searchUserMongoRepository = MongoUserRepository(mongoDatabase)
     val searchUserAction = SearchUserAction(SearchUserQueryHandler(searchUserMongoRepository))
-    val createUserAction = CreateUserAction(CreateUserHandler(searchUserMongoRepository)),
-    val followUserAction = FollowUserAction(FollowUserHandler(MongoUserRepository))
-
+    val createUserAction = CreateUserAction(CreateUserHandler(searchUserMongoRepository))
+    val followUserAction = FollowUserAction(FollowUserHandler(searchUserMongoRepository))
 
     routing {
         get("/users/{name}") {
-            val username = call.request.queryParameters["username"]
+            val username = call.parameters["name"]
             if (username.isNullOrBlank()) {
-                call.respond(HttpStatusCode.BadRequest, "Enter username")
+                call.respond(HttpStatusCode.BadRequest, "Ingrese el nombre de usuario")
                 return@get
             }
 
@@ -45,49 +40,50 @@ fun Application.userRoutes() {
                 if (user != null) {
                     call.respond(HttpStatusCode.OK, user)
                 } else {
-                    call.respond(HttpStatusCode.NotFound, "User not found")
+                    call.respond(HttpStatusCode.NotFound, "Usuario no encontrado")
                 }
             } catch (error: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error")
+                call.respond(HttpStatusCode.InternalServerError, "Error interno del servidor")
             }
         }
+
         post("/users") {
-
             val body = call.receive<CreateUserCommand>()
-
-            createUserAction.execute(body);
-
-            call.respond(HttpStatusCode.Created, mapOf("message" to "ok"))
-
-        }
-        post("/register") {
-            val body = call.receive<CreateUserCommand>()
-
             try {
                 createUserAction.execute(body)
-                call.respond(HttpStatusCode.Created, mapOf("message" to "User created successfully"))
+                call.respond(HttpStatusCode.Created, mapOf("mensaje" to "Usuario creado exitosamente"))
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error creating user")
+                call.respond(HttpStatusCode.InternalServerError, "Error al crear el usuario")
             }
         }
-        // Follow User Route
+
+        post("/register") {
+            val body = call.receive<CreateUserCommand>()
+            try {
+                createUserAction.execute(body)
+                call.respond(HttpStatusCode.Created, mapOf("mensaje" to "Usuario registrado exitosamente"))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error al registrar el usuario")
+            }
+        }
+
+        // Ruta para seguir a un usuario
         post("/users/{followerId}/follow/{followeeId}") {
             val followerId = call.parameters["followerId"]
             val followeeId = call.parameters["followeeId"]
 
             if (followerId == null || followeeId == null) {
-                call.respond(HttpStatusCode.BadRequest, "Follower ID and Followee ID must be provided")
+                call.respond(HttpStatusCode.BadRequest, "Debe proporcionar los IDs de seguidor y seguido")
                 return@post
             }
 
             try {
-                val command = FollowCommand(followerId, followeeId)
+                val command = FollowUserCommand(followerId, followeeId)
                 followUserAction.execute(command)
-                call.respond(HttpStatusCode.OK, mapOf("message" to "Followed successfully"))
+                call.respond(HttpStatusCode.OK, mapOf("mensaje" to "Seguido exitosamente"))
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error following user")
+                call.respond(HttpStatusCode.InternalServerError, "Error al seguir al usuario")
             }
         }
-
     }
 }

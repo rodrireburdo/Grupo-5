@@ -5,8 +5,7 @@ import utn.methodology.application.commands.FollowUserCommand
 
 
 
-class FollowUserHandler (private val userRepository: MongoUserRepository)
-{
+class FollowUserHandler(private val userRepository: MongoUserRepository) {
     fun followUser(command: FollowUserCommand): String {
         val follower = userRepository.findById(command.followerId)
         val followee = userRepository.findById(command.followeeId)
@@ -14,19 +13,19 @@ class FollowUserHandler (private val userRepository: MongoUserRepository)
         if (follower == null || followee == null) {
             return "Uno de los usuarios no existe."
         }
-        if (follower.id == followee.id) {
+        if (follower.getId() == followee.getId()) {
             return "No puedes seguirte a ti mismo."
         }
-        if (follower.following.contains(followee.id)) {
+        if (follower.getFollowing().contains(followee.getId())) {
             return "Ya sigues a este usuario."
         }
 
-        follower.following.add(followee.id)
-        followee.followers.add(follower.id)
+        follower.getFollowing().add(followee.getId())
+        followee.getFollowers().add(follower.getId())
 
         userRepository.save(follower)
         userRepository.save(followee)
 
-        return "Siguiendo a ${followee.username} exitosamente."
-    
+        return "Siguiendo a ${followee.getUsername()} exitosamente."
+    }
 }
