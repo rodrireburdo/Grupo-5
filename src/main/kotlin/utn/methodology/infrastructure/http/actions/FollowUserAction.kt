@@ -2,6 +2,8 @@ package utn.methodology.infrastructure.http.actions
 
 import utn.methodology.application.commandhandlers.FollowUserHandler
 import utn.methodology.application.commands.FollowUserCommand
+import utn.methodology.application.queryhandlers.FollowerQueryHandler
+import utn.methodology.application.queries.GetFollowersQuery
 
 class FollowUserAction(
     private val followUserHandler: FollowUserHandler
