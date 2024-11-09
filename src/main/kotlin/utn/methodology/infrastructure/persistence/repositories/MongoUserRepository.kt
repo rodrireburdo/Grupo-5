@@ -7,8 +7,6 @@ import utn.methodology.domain.entities.User
 import org.bson.Document
 import java.util.UUID
 
-
-
 class MongoUserRepository(private val database: MongoDatabase) {
 
     private var collection: MongoCollection<Document>
@@ -19,11 +17,11 @@ class MongoUserRepository(private val database: MongoDatabase) {
     }
 
     fun save(user: User){
-            val options = UpdateOptions().upsert(true)
-            val filter = Document("_id", user.getId())
-            val update = Document("\$set", user.toPrimitives())
+        val options = UpdateOptions().upsert(true)
+        val filter = Document("_id", user.getId())
+        val update = Document("\$set", user.toPrimitives())
 
-            collection.updateOne(filter, update, options)
+        collection.updateOne(filter, update, options)
     }
     fun findByName(name: String): User? {
         val filter = Document("_name", name)
@@ -37,12 +35,6 @@ class MongoUserRepository(private val database: MongoDatabase) {
         val primitives = collection.find(filter).firstOrNull() ?: return null;
 
         return User.fromPrimitives(primitives as Map<String, String>)
-    }
-    fun findById(id: String): User? {
-        val filter = Document("_id", id)
-        val document = collection.find(filter).firstOrNull() ?: return null
-
-        return User.fromPrimitives(document.toMap() as Map<String, String>)
     }
 
     fun findAll(): List<User> {
@@ -68,9 +60,6 @@ class MongoUserRepository(private val database: MongoDatabase) {
         return User.fromPrimitives(primitives as Map<String, String>)
     }
 }
-
-
-
 
 
 
