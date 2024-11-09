@@ -10,9 +10,15 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.*
 import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import org.slf4j.LoggerFactory
 import utn.methodology.infrastructure.persistence.configureDatabases
 import utn.methodology.infrastructure.http.router.userRoutes
+import utn.methodology.infrastructure.persistence.connectToMongoDB
+import utn.methodology.infrastructure.persistence.repositories.MongoPostRepository
+import utn.methodology.services.PostService.PostService
+import utn.methodology.infrastructure.http.router.postRoutes // Cambia el paquete según donde esté definida la función
+
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -40,19 +46,21 @@ fun Application.module() {
             enable(SerializationFeature.INDENT_OUTPUT)
         }
     }
-    val postRepository = PostRepository()
+
+    val database = connectToMongoDB()
+
+    val postRepository = MongoPostRepository(database)
+
     val postService = PostService()
 
     routing {
-        postRoutes(postService, postRepository)
+        this@module.postRoutes(postService, postRepository)
     }
 
     configureDatabases()
     userRoutes()
     errorHandler()
 }
-
-
 
 fun logError(call: ApplicationCall, cause: Throwable) {
     val log = LoggerFactory.getLogger("ErrorLogger")

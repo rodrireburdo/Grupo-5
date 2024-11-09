@@ -13,9 +13,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import utn.methodology.application.commandhandlers.CreateUserHandler
 import utn.methodology.infrastructure.http.actions.CreateUserAction
-import utn.methodology.application.commandhandlers.FollowUserHandler
-import utn.methodology.infrastructure.http.actions.FollowUserAction
-import utn.methodology.application.commands.FollowUserCommand
 
 
 fun Application.userRoutes() {
@@ -23,13 +20,12 @@ fun Application.userRoutes() {
     val searchUserMongoRepository = MongoUserRepository(mongoDatabase)
     val searchUserAction = SearchUserAction(SearchUserQueryHandler(searchUserMongoRepository))
     val createUserAction = CreateUserAction(CreateUserHandler(searchUserMongoRepository))
-    val followUserAction = FollowUserAction(FollowUserHandler(searchUserMongoRepository))
 
     routing {
         get("/users/{name}") {
-            val username = call.parameters["name"]
+            val username = call.request.queryParameters["username"]
             if (username.isNullOrBlank()) {
-                call.respond(HttpStatusCode.BadRequest, "Ingrese el nombre de usuario")
+                call.respond(HttpStatusCode.BadRequest, "Enter username")
                 return@get
             }
 
@@ -40,49 +36,29 @@ fun Application.userRoutes() {
                 if (user != null) {
                     call.respond(HttpStatusCode.OK, user)
                 } else {
-                    call.respond(HttpStatusCode.NotFound, "Usuario no encontrado")
+                    call.respond(HttpStatusCode.NotFound, "User not found")
                 }
             } catch (error: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error interno del servidor")
+                call.respond(HttpStatusCode.InternalServerError, "Error")
             }
         }
-
         post("/users") {
-            val body = call.receive<CreateUserCommand>()
-            try {
-                createUserAction.execute(body)
-                call.respond(HttpStatusCode.Created, mapOf("mensaje" to "Usuario creado exitosamente"))
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error al crear el usuario")
-            }
-        }
 
+            val body = call.receive<CreateUserCommand>()
+
+            createUserAction.execute(body);
+
+            call.respond(HttpStatusCode.Created, mapOf("message" to "ok"))
+
+        }
         post("/register") {
             val body = call.receive<CreateUserCommand>()
+
             try {
                 createUserAction.execute(body)
-                call.respond(HttpStatusCode.Created, mapOf("mensaje" to "Usuario registrado exitosamente"))
+                call.respond(HttpStatusCode.Created, mapOf("message" to "User created successfully"))
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error al registrar el usuario")
-            }
-        }
-
-        // Ruta para seguir a un usuario
-        post("/users/{followerId}/follow/{followeeId}") {
-            val followerId = call.parameters["followerId"]
-            val followeeId = call.parameters["followeeId"]
-
-            if (followerId == null || followeeId == null) {
-                call.respond(HttpStatusCode.BadRequest, "Debe proporcionar los IDs de seguidor y seguido")
-                return@post
-            }
-
-            try {
-                val command = FollowUserCommand(followerId, followeeId)
-                followUserAction.execute(command)
-                call.respond(HttpStatusCode.OK, mapOf("mensaje" to "Seguido exitosamente"))
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error al seguir al usuario")
+                call.respond(HttpStatusCode.InternalServerError, "Error creating user")
             }
         }
     }

@@ -1,8 +1,9 @@
-package utn.methodology.domain.entities
+package utn.methodology.application.commands
+
 
 import java.time.LocalDateTime
 
-data class Post(
+data class CreatePostCommand(
     val postId: String,
     val userId: Long,
     val message: String,

@@ -60,8 +60,8 @@ class MongoUserRepository(private val database: MongoDatabase) {
         collection.deleteOne(filter)
     }
 
-    fun findById(userId: String): Any {
-        val filter = Document("_id", id)
+    fun findById(userId: String): User? {
+        val filter = Document("_id", userId)
 
         val primitives = collection.find(filter).firstOrNull() ?: return null;
 

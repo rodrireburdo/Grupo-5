@@ -1,38 +1,31 @@
 package utn.methodology.domain.entities
 
 class User(
-    private val id: String,
+    private val userId: String,
     private var name: String,
     private var username: String,
     private val email: String,
     private var password: String,
-    val followers: MutableSet<String> = mutableSetOf(),
-    val following: MutableSet<String> = mutableSetOf(),
-) {
+)
+{
+    //En vez de usar as String, uso ?: "" para asegurar que si algún valor es null, se le asigne una cadena vacía ("")
+    //y evita excepciones debido a valores nulos o tipos inesperados.
     companion object {
         fun fromPrimitives(primitives: Map<String, String>): User {
-            val followers = primitives["followers"]?.split(",")?.toMutableSet() ?: mutableSetOf()
-            val following = primitives["following"]?.split(",")?.toMutableSet() ?: mutableSetOf()
-
-            return User(
+            val user = User(
                 primitives["id"] ?: "",
                 primitives["name"] ?: "",
                 primitives["username"] ?: "",
                 primitives["email"] ?: "",
                 primitives["password"] ?: "",
-                followers,
-                following
-            )
+            );
+            return user;
         }
     }
 
-    // Cambia los getters para devolver MutableSet
-    fun getFollowers(): MutableSet<String> = followers
-    fun getFollowing(): MutableSet<String> = following
-
-    fun getId(): String = id
-    fun getName(): String = name
-    fun getUsername(): String = username
+    fun getName(): String{
+        return this.name
+    }
 
     fun update(name: String, username: String, password: String) {
         this.name = name
@@ -42,13 +35,15 @@ class User(
 
     fun toPrimitives(): Map<String, String> {
         return mapOf(
-            "id" to this.id,
+            "id" to this.userId,
             "name" to this.name,
             "username" to this.username,
             "email" to this.email,
             "password" to this.password,
-            "followers" to this.followers.joinToString(","),
-            "following" to this.following.joinToString(",")
         )
+    }
+
+    fun getId(): String {
+        return this.userId
     }
 }
