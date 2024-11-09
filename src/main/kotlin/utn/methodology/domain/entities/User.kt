@@ -1,13 +1,11 @@
 package utn.methodology.domain.entities
 
 class User(
-    private val id: String,
+    private val userId: String,
     private var name: String,
     private var username: String,
     private val email: String,
     private var password: String,
-    private val followers: MutableSet<String> = mutableSetOf(),
-    private val following: MutableSet<String> = mutableSetOf(),
 )
 {
     //En vez de usar as String, uso ?: "" para asegurar que si algún valor es null, se le asigne una cadena vacía ("")
@@ -20,8 +18,6 @@ class User(
                 primitives["username"] ?: "",
                 primitives["email"] ?: "",
                 primitives["password"] ?: "",
-                primitives["followers"] ?: "",
-                primitives["following"] ?: ""
             );
             return user;
         }
@@ -39,17 +35,15 @@ class User(
 
     fun toPrimitives(): Map<String, String> {
         return mapOf(
-            "id" to this.id,
+            "id" to this.userId,
             "name" to this.name,
             "username" to this.username,
             "email" to this.email,
             "password" to this.password,
-            "followers" to this.followers,
-            "following" to this.following
         )
     }
 
     fun getId(): String {
-        return this.id
+        return this.userId
     }
 }

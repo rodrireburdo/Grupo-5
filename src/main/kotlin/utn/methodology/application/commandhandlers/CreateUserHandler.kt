@@ -22,11 +22,11 @@ class CreateUserHandler(
 
         // Crear un nuevo usuario
         val user = User(
-            id = UUID.randomUUID().toString(),
+            userId = UUID.randomUUID().toString(),
             name = command.userName,
             username = command.userName,
             email = command.email,
-            password = command.password
+            password = command.password,
         )
 
         //Guardar el usuario en el repositorio
