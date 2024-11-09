@@ -38,6 +38,12 @@ class MongoUserRepository(private val database: MongoDatabase) {
 
         return User.fromPrimitives(primitives as Map<String, String>)
     }
+    fun findById(id: String): User? {
+        val filter = Document("_id", id)
+        val document = collection.find(filter).firstOrNull() ?: return null
+
+        return User.fromPrimitives(document.toMap() as Map<String, String>)
+    }
 
     fun findAll(): List<User> {
 
