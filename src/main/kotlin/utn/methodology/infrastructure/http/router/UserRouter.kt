@@ -23,7 +23,8 @@ fun Application.userRoutes() {
 
     routing {
         get("/users/{name}") {
-            val username = call.request.queryParameters["username"]
+            val username = call.parameters["name"]
+
             if (username.isNullOrBlank()) {
                 call.respond(HttpStatusCode.BadRequest, "Enter username")
                 return@get
