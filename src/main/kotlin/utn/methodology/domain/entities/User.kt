@@ -1,11 +1,16 @@
 package utn.methodology.domain.entities
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 class User(
     private val userId: String,
     private var name: String,
     private var username: String,
     private val email: String,
     private var password: String,
+    var followers: MutableList<String> = mutableListOf(),   // IDs de los seguidores
+    var following: MutableList<String> = mutableListOf()   // IDs de los usuarios seguidos
 )
 {
     //En vez de usar as String, uso ?: "" para asegurar que si algún valor es null, se le asigne una cadena vacía ("")
@@ -18,7 +23,9 @@ class User(
                 primitives["username"] ?: "",
                 primitives["email"] ?: "",
                 primitives["password"] ?: "",
-            );
+                mutableListOf(), // Inicialización para followers
+                mutableListOf()  // Inicialización para following
+                );
             return user;
         }
     }

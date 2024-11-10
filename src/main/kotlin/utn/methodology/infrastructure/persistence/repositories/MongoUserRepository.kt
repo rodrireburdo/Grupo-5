@@ -2,7 +2,9 @@ package utn.methodology.infrastructure.persistence.repositories
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.Filters
 import com.mongodb.client.model.UpdateOptions
+import com.mongodb.client.model.Updates
 import utn.methodology.domain.entities.User
 import org.bson.Document
 import java.util.UUID
@@ -24,15 +26,9 @@ class MongoUserRepository(private val database: MongoDatabase) {
         collection.updateOne(filter, update, options)
     }
     fun findByName(name: String): User? {
-        val filter = Document("_name", name)
+        val filter = Document("username", name)
 
-        val primitives = collection.find(filter).firstOrNull() ?: return null;
-
-        return User.fromPrimitives(primitives as Map<String, String>)
-    }
-    fun findByEmail(email: String): User?{
-        val filter = Document("_email", email)
-        val primitives = collection.find(filter).firstOrNull() ?: return null;
+        val primitives = collection.find(filter).firstOrNull() ?: return null
 
         return User.fromPrimitives(primitives as Map<String, String>)
     }
@@ -58,6 +54,36 @@ class MongoUserRepository(private val database: MongoDatabase) {
         val primitives = collection.find(filter).firstOrNull() ?: return null;
 
         return User.fromPrimitives(primitives as Map<String, String>)
+    }
+
+    // Método para seguir a un usuario
+    fun followUser(followerId: String, userName: String): Boolean {
+        // Buscar al usuario con el nombre de usuario proporcionado
+        val user = collection.find(Document("username", userName)).firstOrNull()
+        val follower = collection.find(Document("_id", followerId)).firstOrNull()
+
+        if (user == null || follower == null) {
+            return false // Si uno de los dos usuarios no existe, no se puede seguir
+        }
+
+        // Asegurarse de que el usuario no se esté siguiendo a sí mismo
+        if (user.getString("_id") == follower.getString("_id")) {
+            return false // No se puede seguir a uno mismo
+        }
+
+        // Agregar el followerId al campo 'followers' del usuario seguido
+        val updateFollowers = collection.updateOne(
+            Document("_id", user.getString("_id")),
+            Document("\$addToSet", Document("followers", followerId))
+        )
+
+        // Agregar el userId al campo 'following' del usuario seguidor
+        val updateFollowing = collection.updateOne(
+            Document("_id", followerId),
+            Document("\$addToSet", Document("following", user.getString("_id")))
+        )
+
+        return updateFollowers.modifiedCount > 0 && updateFollowing.modifiedCount > 0
     }
 }
 
