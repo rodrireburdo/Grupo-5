@@ -1,10 +1,12 @@
 package utn.methodology.domain.entities
 
-import java.time.LocalDateTime
+import kotlinx.serialization.Serializable
+import java.util.*
 
+@Serializable
 data class Post(
-    val postId: String,
-    val userId: Long,
+    val postId: String = UUID.randomUUID().toString(),
+    val userId: String,
     val message: String,
     val createdAt: Long = System.currentTimeMillis(),
     val author: String

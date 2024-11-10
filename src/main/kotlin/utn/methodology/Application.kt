@@ -16,50 +16,46 @@ import utn.methodology.infrastructure.persistence.configureDatabases
 import utn.methodology.infrastructure.http.router.userRoutes
 import utn.methodology.infrastructure.persistence.connectToMongoDB
 import utn.methodology.infrastructure.persistence.repositories.MongoPostRepository
-import utn.methodology.services.PostService.PostService
 import utn.methodology.infrastructure.http.router.postRoutes // Cambia el paquete según donde esté definida la función
-
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
 }
 
-fun Application.errorHandler() {
-    install(StatusPages) {
-        exception<Throwable> { call, cause ->
-            utn.methodology.logError(call, cause)
-
-            if (cause is NotFoundException) {
-                call.respond(HttpStatusCode.NotFound, mapOf("error" to cause.message))
-            } else {
-                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Internal server error"))
-            }
-
-        }
-    }
-}
-
 fun Application.module() {
     install(ContentNegotiation) {
-        json()
         jackson {
             enable(SerializationFeature.INDENT_OUTPUT)
         }
     }
 
-    val database = connectToMongoDB()
+    // Configuración del manejador de errores
+    errorHandler()
 
+    // Conexión y configuración de la base de datos
+    val database = connectToMongoDB()
     val postRepository = MongoPostRepository(database)
 
-    val postService = PostService()
-
+    // Rutas y configuración del enrutador
     routing {
-        this@module.postRoutes(postService, postRepository)
+        this@module.postRoutes(postRepository)  // Rutas para manejar posts
+        this@module.userRoutes()                // Rutas para manejar usuarios
     }
 
     configureDatabases()
-    userRoutes()
-    errorHandler()
+}
+
+fun Application.errorHandler() {
+    install(StatusPages) {
+        exception<Throwable> { call, cause ->
+            logError(call, cause)
+            val status = when (cause) {
+                is IllegalArgumentException -> HttpStatusCode.BadRequest
+                else -> HttpStatusCode.InternalServerError
+            }
+            call.respond(status, mapOf("error" to (cause.message ?: "Error interno del servidor")))
+        }
+    }
 }
 
 fun logError(call: ApplicationCall, cause: Throwable) {
