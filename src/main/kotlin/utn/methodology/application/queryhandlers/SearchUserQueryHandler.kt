@@ -15,7 +15,5 @@ class SearchUserQueryHandler(
             throw NotFoundException("user with username ${query.username} not found")
         }
         return user.toPrimitives()
-
-
-}
+    }
 }

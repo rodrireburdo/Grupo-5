@@ -14,12 +14,6 @@ class CreateUserHandler(
             return "Error: El nombre de usuario y el correo electrónico no pueden estar vacíos."
         }
 
-        // Verificar si el usuario ya existe
-        val existingUser = mongoUserRepository.findByEmail(command.email)
-        if (existingUser != null) {
-            return "Error: Ya existe un usuario con este correo electrónico."
-        }
-
         // Crear un nuevo usuario
         val user = User(
             userId = UUID.randomUUID().toString(),
