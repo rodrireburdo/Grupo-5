@@ -13,7 +13,7 @@ class MongoPostRepository(private val database: MongoDatabase) {
 
     fun save(post: Post) {
         val document = Document().apply {
-            put("userId", post.userId.toString())
+            put("userId", post.userId)
             put("postId", post.postId)
             put("message", post.message)
             put("author", post.author)
