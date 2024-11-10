@@ -5,18 +5,19 @@ import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.slf4j.LoggerFactory
-import utn.methodology.infrastructure.persistence.configureDatabases
+import utn.methodology.infrastructure.http.router.postRoutes
 import utn.methodology.infrastructure.http.router.userRoutes
+import utn.methodology.infrastructure.persistence.configureDatabases
 import utn.methodology.infrastructure.persistence.connectToMongoDB
 import utn.methodology.infrastructure.persistence.repositories.MongoPostRepository
 import utn.methodology.infrastructure.http.router.postRoutes // Cambia el paquete según donde esté definida la función
+
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
