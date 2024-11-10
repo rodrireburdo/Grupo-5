@@ -16,6 +16,8 @@ import utn.methodology.infrastructure.http.router.userRoutes
 import utn.methodology.infrastructure.persistence.configureDatabases
 import utn.methodology.infrastructure.persistence.connectToMongoDB
 import utn.methodology.infrastructure.persistence.repositories.MongoPostRepository
+import utn.methodology.infrastructure.http.router.postRoutes // Cambia el paquete según donde esté definida la función
+
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
