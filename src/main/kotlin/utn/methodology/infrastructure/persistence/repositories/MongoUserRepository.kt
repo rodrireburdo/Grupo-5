@@ -43,12 +43,6 @@ class MongoUserRepository(private val database: MongoDatabase) {
         };
     }
 
-    fun delete(user: User) {
-        val filter = Document("_name", user.getName());
-
-        collection.deleteOne(filter)
-    }
-
     fun findById(userId: String): User? {
         val filter = Document("_id", userId)
 
