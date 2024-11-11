@@ -3,7 +3,6 @@ package utn.methodology.application.commands
 data class CreatePostCommand(
     val userId: String,
     val message: String,
-    val createdAt: Long,
     val author: String
 ) {
     fun validate() {

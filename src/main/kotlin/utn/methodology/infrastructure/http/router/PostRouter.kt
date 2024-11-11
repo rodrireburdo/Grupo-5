@@ -104,7 +104,6 @@ private fun CreatePostCommand.toPost(): Post {
     return Post(
         userId = this.userId.toString(),
         message = this.message,
-        createdAt = this.createdAt,
         author = this.author
     )
 }
