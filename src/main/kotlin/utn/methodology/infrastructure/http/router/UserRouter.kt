@@ -1,3 +1,4 @@
+package utn.methodology.infrastructure.http.router
 import utn.methodology.infrastructure.persistence.connectToMongoDB
 import utn.methodology.application.commands.CreateUserCommand
 import io.ktor.http.*
@@ -9,8 +10,6 @@ import org.bson.Document
 import utn.methodology.application.commandhandlers.CreateUserHandler
 import utn.methodology.infrastructure.http.actions.CreateUserAction
 import com.mongodb.client.MongoCollection
-import com.mongodb.client.MongoDatabase
-import com.mongodb.client.model.Filters
 import utn.methodology.application.queries.SearchUserQuery
 import utn.methodology.application.queryhandlers.SearchUserQueryHandler
 import utn.methodology.infrastructure.http.actions.SearchUserAction
@@ -127,28 +126,4 @@ fun Application.userRoutes() {
             }
         }
     }
-}
-
-// Función para seguir a un usuario
-fun followUser(collection: MongoCollection<Document>, followerId: String, userName: String): Boolean {
-    // Buscar al usuario con el nombre de usuario proporcionado
-    val user = collection.find(Filters.eq("username", userName)).firstOrNull()
-    val follower = collection.find(Filters.eq("_id", followerId)).firstOrNull()
-
-    if (user == null || follower == null) {
-        return false // Si uno de los dos usuarios no existe, no se puede seguir
-    }
-
-    // Asegurarse de que el usuario no se esté siguiendo a sí mismo
-    if (user.getObjectId("_id") == follower.getObjectId("_id")) {
-        return false // No se puede seguir a uno mismo
-    }
-
-    // Agregar el followerId al campo 'followers' del usuario
-    val updateResult = collection.updateOne(
-        Filters.eq("username", userName),
-        Document("\$addToSet", Document("followers", followerId))
-    )
-
-    return updateResult.modifiedCount > 0
 }

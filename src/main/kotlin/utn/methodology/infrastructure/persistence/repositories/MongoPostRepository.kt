@@ -25,6 +25,7 @@ class MongoPostRepository(private val database: MongoDatabase) {
 
     // Método para eliminar un post por ID
     fun deleteById(postId: String): Boolean {
+        println("Eliminando post con ID: $postId")  // Log para depuración
         val deleteResult = collection.deleteOne(Filters.eq("postId", postId))
         return deleteResult.deletedCount > 0
     }

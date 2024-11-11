@@ -8,8 +8,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import utn.methodology.application.commands.CreatePostCommand
 import utn.methodology.domain.entities.Post
+import utn.methodology.infrastructure.persistence.repositories.MongoUserRepository
 
-fun Application.postRoutes(postRepository: MongoPostRepository) {
+fun Application.postRoutes(postRepository: MongoPostRepository, userRepository: MongoUserRepository) {
     routing {
         route("/posts") {
 
@@ -33,6 +34,7 @@ fun Application.postRoutes(postRepository: MongoPostRepository) {
                     call.respond(HttpStatusCode.InternalServerError, "Error al crear el post: ${e.localizedMessage}")
                 }
             }
+
 
             get {
                 // Obtener los parámetros de consulta opcionales
@@ -61,6 +63,26 @@ fun Application.postRoutes(postRepository: MongoPostRepository) {
                 }
             }
 
+            get("/users/{followerId}/followed/{followedId}") {
+                val followerId = call.parameters["followerId"]
+                val followedId = call.parameters["followedId"]
+
+                if (followerId.isNullOrBlank() || followedId.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Se requieren los IDs de los usuarios (followerId y followedId)")
+                    return@get
+                }
+
+                // Verificar si followerId sigue a followedId
+                val isFollowing = userRepository.isFollowing(followerId, followedId)
+                if (!isFollowing) {
+                    call.respond(HttpStatusCode.Forbidden, "El usuario no tiene permiso para ver los posts de este usuario")
+                    return@get
+                }
+
+                // Obtener y devolver los posts del usuario seguido
+                val posts = postRepository.findPosts("ASC", 10, 0, followedId)
+                call.respond(HttpStatusCode.OK, posts)
+            }
             // Ruta para eliminar un post por ID
             delete("/{postId}") {
                 val postId = call.parameters["postId"] ?: return@delete call.respond(HttpStatusCode.BadRequest, "Falta el ID del post")
@@ -75,6 +97,7 @@ fun Application.postRoutes(postRepository: MongoPostRepository) {
         }
     }
 }
+
 
 // Función de extensión para convertir el comando en un objeto Post
 private fun CreatePostCommand.toPost(): Post {

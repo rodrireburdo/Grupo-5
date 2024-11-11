@@ -3,6 +3,7 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.Updates
 import utn.methodology.domain.entities.User
@@ -82,13 +83,15 @@ class MongoUserRepository(private val database: MongoDatabase) {
             Document("_id", followerId),
             Document("\$addToSet", Document("following", user.getString("_id")))
         )
-
         return updateFollowers.modifiedCount > 0 && updateFollowing.modifiedCount > 0
     }
+
+    // Método para verificar si un usuario sigue a otro
+    fun isFollowing(followerId: String, followedId: String): Boolean {
+        val user = collection.find(eq("_id", followedId)).firstOrNull()
+        return user?.getList("followers", String::class.java)?.contains(followerId) == true
+    }
 }
-
-
-
 
 
 
