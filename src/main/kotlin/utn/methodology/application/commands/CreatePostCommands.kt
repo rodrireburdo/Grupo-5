@@ -7,13 +7,11 @@ data class CreatePostCommand(
     val author: String
 ) {
     fun validate() {
-        // Validación del userId como número positivo
-        val userIdInt = userId.toIntOrNull()
-        if (userIdInt == null || userIdInt <= 0) {
-            throw IllegalArgumentException("El userId debe ser un número positivo")
+        // Validación de los campos obligatorios
+        if (userId.isBlank()) {
+            throw IllegalArgumentException("El mensaje no puede estar vacío")
         }
 
-        // Validación de los campos obligatorios
         if (message.isBlank()) {
             throw IllegalArgumentException("El mensaje no puede estar vacío")
         }
