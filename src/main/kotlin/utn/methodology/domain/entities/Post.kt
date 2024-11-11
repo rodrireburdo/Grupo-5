@@ -9,5 +9,4 @@ data class Post(
     val userId: String,
     val message: String,
     val createdAt: Long = System.currentTimeMillis(),
-    val author: String
 )

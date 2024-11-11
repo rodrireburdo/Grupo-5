@@ -38,7 +38,7 @@ fun Application.postRoutes(postRepository: MongoPostRepository, userRepository: 
 
             get {
                 // Obtener los parámetros de consulta opcionales
-                val order = call.request.queryParameters["order"]?.toUpperCase() ?: "ASC"
+                val order = call.request.queryParameters["order"]?.toUpperCase() ?: "DESC"
                 val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
                 val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
                 val userId = call.request.queryParameters["userId"]
@@ -104,7 +104,6 @@ private fun CreatePostCommand.toPost(): Post {
     return Post(
         userId = this.userId.toString(),
         message = this.message,
-        author = this.author
     )
 }
 

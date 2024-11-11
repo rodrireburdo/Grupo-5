@@ -15,7 +15,6 @@ class CreatePostHandler(
             postId = UUID.randomUUID().toString(),
             userId = command.userId.toString(),
             message = command.message,
-            author = command.author,
             createdAt = System.currentTimeMillis()
         )
         postRepository.save(post)

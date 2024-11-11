@@ -17,7 +17,6 @@ class MongoPostRepository(private val database: MongoDatabase) {
             put("userId", post.userId)
             put("postId", post.postId)
             put("message", post.message)
-            put("author", post.author)
             put("createdAt", post.createdAt)
         }
         collection.insertOne(document)
@@ -55,7 +54,6 @@ class MongoPostRepository(private val database: MongoDatabase) {
             userId = document.getString("userId"),
             message = document.getString("message"),
             createdAt = document.getLong("createdAt"),
-            author = document.getString("author")
         )
     }
 }
